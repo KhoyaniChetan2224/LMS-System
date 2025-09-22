@@ -1,141 +1,339 @@
-// import React from 'react'
-// import AdminHeader from './Admin Header/header'
-
-// const UpcomingClassSchedule = () => {
-
-    
-
-//   return (
-//     <div className="flex h-screen font-sans bg-cyan-50">
-//             {/* Sidebar */}
-//             <AdminHeader />
-
-//             {/* Main Content */}
-//             <div className="ml-2 mr-2 mt-2 flex-1 space-y-6 p-4 sm:p-6 overflow-y-auto">
-                
-//             </div>
-
-
-//     </div>
-//   )
-// }
-
-// export default UpcomingClassSchedule
-
-import React, { useState } from "react";
-import {
-  Home,
-  BookOpen,
-  Calendar,
-  Users,
-  Settings,
-  LogOut,
-  Search,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
 import AdminHeader from "./Admin Header/header";
 
-export default function LMSUpcomingClasses() {
-  const [active, setActive] = useState("Schedule");
+export default function ClassSchedulePage() {
+  const [form, setForm] = useState({
+    className: "",
+    teacher: "",
+    subject: "",
+    time: "",
+    date: "",
+    course: "",
+  });
 
-  // Mock class data
-  const upcomingClasses = [
-    {
-      id: 1,
-      course: "Mathematics - Algebra",
-      instructor: "Dr. Smith",
-      date: "Mon, Sep 22",
-      time: "10:00 AM - 11:30 AM",
-      mode: "Online",
-    },
-    {
-      id: 2,
-      course: "Science - Physics",
-      instructor: "Prof. Johnson",
-      date: "Tue, Sep 23",
-      time: "2:00 PM - 3:30 PM",
-      mode: "Classroom",
-    },
-    {
-      id: 3,
-      course: "English Literature",
-      instructor: "Ms. Taylor",
-      date: "Wed, Sep 24",
-      time: "9:00 AM - 10:30 AM",
-      mode: "Online",
-    },
+  const [errors, setErrors] = useState({});
+  const [schedules, setSchedules] = useState(() => {
+    try {
+      const raw = localStorage.getItem("class_schedules");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Persist schedules to localStorage
+  useEffect(() => {
+    localStorage.setItem("class_schedules", JSON.stringify(schedules));
+  }, [schedules]);
+
+  // Course options
+  const courses = [
+    "Select course",
+    "Computer Science",
+    "Mathematics",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "History",
+    "English",
   ];
 
-  // Weekly schedule mock
-  const weeklySchedule = {
-    Monday: ["Mathematics (10:00 AM)", "Biology (3:00 PM)"],
-    Tuesday: ["Physics (2:00 PM)"],
-    Wednesday: ["English (9:00 AM)"],
-    Thursday: [],
-    Friday: ["Chemistry (1:00 PM)"],
-    Saturday: ["History (11:00 AM)"],
-    Sunday: [],
-  };
+  // Form validation
+  function validate(values) {
+    const e = {};
+    if (!values.className.trim()) e.className = "Class name is required";
+    if (!values.teacher.trim()) e.teacher = "Teacher name is required";
+    if (!values.subject.trim()) e.subject = "Subject name is required";
+    if (!values.time.trim()) e.time = "Time is required";
+    if (!values.date.trim()) e.date = "Date is required";
+    if (!values.course || values.course === "Select course")
+      e.course = "Please choose a course";
+    return e;
+  }
+
+  // Input handler
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
+  // Submit handler
+  function handleSubmit(e) {
+    e.preventDefault();
+    const v = validate(form);
+    if (Object.keys(v).length) return setErrors(v);
+
+    const newSchedule = {
+      id: Date.now(),
+      ...form,
+      createdAt: new Date().toISOString(),
+    };
+
+    setSchedules((s) => [newSchedule, ...s]);
+    setForm({
+      className: "",
+      teacher: "",
+      subject: "",
+      time: "",
+      date: "",
+      course: "",
+    });
+    setErrors({});
+  }
+
+  // Delete handler
+  function handleDelete(id) {
+    if (!confirm("Delete this schedule?")) return;
+    setSchedules((s) => s.filter((x) => x.id !== id));
+  }
+
+  // Reset form
+  function handleReset() {
+    setForm({
+      className: "",
+      teacher: "",
+      subject: "",
+      time: "",
+      date: "",
+      course: "",
+    });
+    setErrors({});
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans">
+    <div className="flex h-screen font-sans bg-cyan-50">
       {/* Sidebar */}
       <AdminHeader />
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col">
-        
+      {/* Main Content */}
+      <main className="ml-2 mr-2 mt-2 flex-1 space-y-6 p-4 sm:p-6 overflow-y-auto">
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Header */}
+          <header>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-800">
+              Create Class Schedule
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Fill in the details below to create a class schedule.
+            </p>
+          </header>
 
-        {/* Upcoming Classes */}
-        <section className="p-6 overflow-y-auto flex-1">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
-            Upcoming Classes
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingClasses.map((cls) => (
-              <div
-                key={cls.id}
-                className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
-              >
-                <h3 className="font-semibold text-blue-600">{cls.course}</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Instructor: {cls.instructor}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">{cls.date}</p>
-                <p className="text-sm text-gray-500">{cls.time}</p>
-                <span className="text-xs px-2 py-1 mt-2 inline-block rounded bg-blue-100 text-blue-600">
-                  {cls.mode}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Weekly Schedule */}
-          <h2 className="text-xl font-bold text-gray-700 mt-8 mb-4">
-            Weekly Schedule
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {Object.entries(weeklySchedule).map(([day, classes]) => (
-              <div
-                key={day}
-                className="bg-white rounded-lg p-3 shadow hover:shadow-md transition"
-              >
-                <h4 className="font-semibold text-blue-600 mb-2">{day}</h4>
-                {classes.length > 0 ? (
-                  classes.map((c, i) => (
-                    <p
-                      key={i}
-                      className="text-sm text-gray-600 border-l-2 border-blue-500 pl-2 mb-1"
-                    >
-                      {c}
-                    </p>
-                  ))
-                ) : (
-                  <p className="text-xs text-gray-400">No Classes</p>
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white shadow-sm rounded-2xl p-6 border border-slate-100"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Class Name */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Class Name
+                </label>
+                <input
+                  name="className"
+                  value={form.className}
+                  onChange={handleChange}
+                  placeholder="e.g. Class A"
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.className ? "border-red-400" : "border-slate-200"
+                  }`}
+                />
+                {errors.className && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.className}
+                  </p>
                 )}
               </div>
-            ))}
-          </div>
-        </section>
+
+              {/* Teacher Name */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Teacher Name
+                </label>
+                <input
+                  name="teacher"
+                  value={form.teacher}
+                  onChange={handleChange}
+                  placeholder="e.g. Mr. Smith"
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.teacher ? "border-red-400" : "border-slate-200"
+                  }`}
+                />
+                {errors.teacher && (
+                  <p className="text-xs text-red-600 mt-1">{errors.teacher}</p>
+                )}
+              </div>
+
+              {/* Subject Name */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Subject Name
+                </label>
+                <input
+                  name="subject"
+                  value={form.subject}
+                  onChange={handleChange}
+                  placeholder="e.g. Algebra II"
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.subject ? "border-red-400" : "border-slate-200"
+                  }`}
+                />
+                {errors.subject && (
+                  <p className="text-xs text-red-600 mt-1">{errors.subject}</p>
+                )}
+              </div>
+
+              {/* Time */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Time
+                </label>
+                <input
+                  type="time"
+                  name="time"
+                  value={form.time}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.time ? "border-red-400" : "border-slate-200"
+                  }`}
+                />
+                {errors.time && (
+                  <p className="text-xs text-red-600 mt-1">{errors.time}</p>
+                )}
+              </div>
+
+              {/* Date */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.date ? "border-red-400" : "border-slate-200"
+                  }`}
+                />
+                {errors.date && (
+                  <p className="text-xs text-red-600 mt-1">{errors.date}</p>
+                )}
+              </div>
+
+              {/* Course */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Course
+                </label>
+                <select
+                  name="course"
+                  value={form.course}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                    errors.course ? "border-red-400" : "border-slate-200"
+                  }`}
+                >
+                  {courses.map((c) => (
+                    <option key={c} value={c} disabled={c === "Select course"}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                {errors.course && (
+                  <p className="text-xs text-red-600 mt-1">{errors.course}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex items-center gap-3 pt-4">
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-full bg-indigo-600 text-white px-4 py-2 text-sm font-medium shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              >
+                Create Schedule
+              </button>
+
+              <button
+                type="button"
+                onClick={handleReset}
+                className="inline-flex items-center justify-center rounded-full bg-white border px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
+
+          {/* Schedule List */}
+          <section className="bg-white shadow-sm rounded-2xl p-6 border border-slate-100">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-slate-800">
+                Scheduled Classes
+              </h2>
+              <button
+                onClick={() => {
+                  if (!confirm("Clear all schedules?")) return;
+                  setSchedules([]);
+                }}
+                className="text-sm text-red-600 hover:underline"
+              >
+                Clear All
+              </button>
+            </div>
+
+            {schedules.length === 0 ? (
+              <p className="text-sm text-slate-500">
+                No schedules yet. Fill the form to add one.
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {schedules.map((s) => (
+                  <li
+                    key={s.id}
+                    className="p-3 border rounded-xl bg-slate-50 flex justify-between items-start"
+                  >
+                    <div>
+                      <p className="font-semibold text-slate-800">
+                        {s.className} • {s.course}
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        {s.subject} — {s.teacher}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {s.date} • {s.time}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Added: {new Date(s.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          navigator.clipboard?.writeText(
+                            `${s.className} | ${s.teacher} | ${s.subject} | ${s.date} ${s.time} | ${s.course}`
+                          )
+                        }
+                        className="text-xs px-2 py-1 rounded-md border bg-white hover:bg-slate-100"
+                        title="Copy"
+                      >
+                        Copy
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="text-xs px-2 py-1 rounded-md border text-red-600 bg-white hover:bg-red-50"
+                        title="Delete"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
       </main>
     </div>
   );
