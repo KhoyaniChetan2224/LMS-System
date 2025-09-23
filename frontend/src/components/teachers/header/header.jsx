@@ -60,8 +60,8 @@ const header = () => {
                     {[
                         { icon: <IoHome />, name: "Home", path: "/teachers/home" },
                         { icon: <IoCalendar />, name: "Class and Course Schedule", path: "/teachers/course-schedule" },
-                        { icon: <MdMonetizationOn />, name: "Chapter", path: "#" },
-                        { icon: <MdUpcoming />, name: "Upcoming Live Classes", path: "#" },
+                        { icon: <MdMonetizationOn />, name: "Chapter", path: "/teachers/chapter" },
+                        { icon: <MdUpcoming />, name: "Upcoming Live Classes", path: "/teachers/create-class-schedule" },
                         { icon: <MdAssignment />, name: "Help", path: "#" },
                         { icon: <MdReport />, name: "Progress Report", path: "#" }
                     ].map((item) => (
