@@ -14,11 +14,13 @@ import Homework from './components/Admin/Homework';
 import PastClasses from './components/Admin/PastClasses';
 import TestYourself from './components/Admin/TestYourself';
 import ProgressReport from './components/Admin/ProgressReport';
-// import MeetingRoom from './components/Admin/MeetingRoom';
 
 import TeacherHome from './components/teachers/Home';
 import TeacherHeader from './components/teachers/header/header';
 import CourseSchedule from './components/teachers/CourseSchedule';
+import Chapter from './components/teachers/Chapter';
+import TeacherUpcommingLiveClasses from './components/teachers/TeacherUpcomingClasses';
+
 
 import StudentHome from './components/student/Home';
 import StudentHeader from './components/student/header/header';
@@ -45,12 +47,13 @@ const App = () => {
         <Route path="/admin/past-classes" element={<PastClasses />} />
         <Route path="/admin/test-yourself" element={<TestYourself />} />
         <Route path='/admin/progres-report' element={<ProgressReport />} />
-        {/* <Route path="/admin/live/:meetingId" element={<MeetingRoom />} /> */}
 
         {/* Teacher Route */}
         <Route path="/teachers/home" element={<TeacherHome />} />
         <Route path="/teachers/header" element={<TeacherHeader />} />
         <Route path="/teachers/course-schedule" element={<CourseSchedule />} />
+        <Route path='/teachers/chapter' element={<Chapter />} />
+        <Route path='/teachers/create-class-schedule' element={<TeacherUpcommingLiveClasses />} />
 
         {/* Student Routes */}
         <Route path="/student/home" element={<StudentHome />} />
