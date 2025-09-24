@@ -13,6 +13,7 @@ import ScheduleClass from './components/Admin/ScheduleClass';
 import Homework from './components/Admin/Homework';
 import PastClasses from './components/Admin/PastClasses';
 import TestYourself from './components/Admin/TestYourself';
+import TestPage from './components/Admin/TestPage';
 import ProgressReport from './components/Admin/ProgressReport';
 
 import TeacherHome from './components/teachers/Home';
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/admin/homework" element={<Homework />} />
         <Route path="/admin/past-classes" element={<PastClasses />} />
         <Route path="/admin/test-yourself" element={<TestYourself />} />
+        <Route path="/admin/test-yourself/:id" element={<TestPage />} />
         <Route path='/admin/progres-report' element={<ProgressReport />} />
 
         {/* Teacher Route */}
