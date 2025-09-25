@@ -15,6 +15,7 @@ import PastClasses from './components/Admin/PastClasses';
 import TestYourself from './components/Admin/TestYourself';
 import TestPage from './components/Admin/TestPage';
 import ProgressReport from './components/Admin/ProgressReport';
+import CoursePage from './components/Admin/CoursePage';
 
 import TeacherHome from './components/teachers/Home';
 import TeacherHeader from './components/teachers/header/header';
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/admin/test-yourself" element={<TestYourself />} />
         <Route path="/admin/test-yourself/:id" element={<TestPage />} />
         <Route path='/admin/progres-report' element={<ProgressReport />} />
+        <Route path="/admin/course/:title" element={<CoursePage />} />
 
         {/* Teacher Route */}
         <Route path="/teachers/home" element={<TeacherHome />} />
