@@ -1,21 +1,49 @@
-// Dashboard.jsx
-import React from "react";
-import { Bell, Mail, Calendar } from "lucide-react";
+import React, { useState } from "react";
+import { Bell, Mail, Calendar, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AdminHeader from "./Admin Header/header";
 
-const courses = [
+const initialCourses = [
   { title: "Additional Mathematics", hoursTaken: 8, totalHours: 32, live: true },
   { title: "Basic Calculus", hoursTaken: 8, totalHours: 32 },
   { title: "Algebra", hoursTaken: 6, totalHours: 24 },
   { title: "Complex Analysis", hoursTaken: 3, totalHours: 22 },
 ];
 
-const classes = [
+const initialClasses = [
   { title: "Biology Molecular", duration: "50 Minute", lessons: 21, assignments: 5, students: 34 },
   { title: "Physics", duration: "40 Minute", lessons: 32, assignments: 7, students: 28 },
 ];
 
 export default function Dashboard() {
+  const [courses, setCourses] = useState(initialCourses);
+  const [classes, setClasses] = useState(initialClasses);
+
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [showClassModal, setShowClassModal] = useState(false);
+
+  const [newCourse, setNewCourse] = useState({ title: "", hoursTaken: "", totalHours: "" });
+  const [newClass, setNewClass] = useState({ title: "", duration: "", lessons: "", assignments: "", students: "" });
+
+  const navigate = useNavigate();
+
+  // Handlers
+  const handleAddCourse = () => {
+    setCourses([...courses, { ...newCourse, live: false }]);
+    setNewCourse({ title: "", hoursTaken: "", totalHours: "" });
+    setShowCourseModal(false);
+  };
+
+  const handleAddClass = () => {
+    setClasses([...classes, { ...newClass }]);
+    setNewClass({ title: "", duration: "", lessons: "", assignments: "", students: "" });
+    setShowClassModal(false);
+  };
+
+  const handleStartCourse = (course) => {
+    navigate(`/admin/course/${encodeURIComponent(course.title)}`, { state: course });
+  };
+
   return (
     <div className="flex h-screen font-sans bg-cyan-50">
       {/* Sidebar */}
@@ -23,77 +51,25 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-y-auto">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-6">
-          <div>
-            <button className="bg-orange-500 text-white px-4 py-2 rounded">Get Subscription</button>
-            <span className="ml-4 text-gray-700">Current Plan: 6 Month Advance</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Bell className="w-6 h-6 text-gray-700" />
-            <Mail className="w-6 h-6 text-gray-700" />
-            <Calendar className="w-6 h-6 text-gray-700" />
-            <div className="text-gray-700">0 $ | 5 PTS</div>
-            <div className="flex items-center space-x-2">
-              <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="Brad"
-                className="w-8 h-8 rounded-full"
-              />
-            </div>
-          </div>
-        </header>
-
-        {/* Subjects */}
-        <div className="flex space-x-2 mb-6">
-          {["All", "Information Technology", "Additional Mathematics", "Physics", "Chemistry", "English Language"].map((subj) => (
-            <button
-              key={subj}
-              className="px-3 py-1 bg-white rounded shadow hover:bg-gray-100"
-            >
-              {subj}
-            </button>
-          ))}
-          <button className="px-3 py-1 bg-green-500 text-white rounded shadow hover:bg-green-600">
-            Add Subject +
-          </button>
-        </div>
-
-        {/* Experience */}
-        <div className="flex justify-between bg-white p-4 rounded shadow mb-6">
-          <div>
-            <p>Experience Dollar</p>
-            <p className="font-bold text-green-600">240 XD</p>
-            <button className="mt-2 px-3 py-1 bg-green-500 text-white rounded">Redeem</button>
-          </div>
-          <div>
-            <p>Experience Points</p>
-            <p className="font-bold text-yellow-500">5 PTS</p>
-            <button className="mt-2 px-3 py-1 bg-yellow-400 text-white rounded">Collect Points</button>
-          </div>
-          <div className="text-center">
-            <p>Schedule a call with an academic advisor</p>
-            <button className="mt-2 px-4 py-2 bg-gray-800 text-white rounded">Schedule Now</button>
-          </div>
-          <div className="text-center">
-            <img
-              src="https://randomuser.me/api/portraits/men/32.jpg"
-              alt="Brad"
-              className="w-12 h-12 rounded-full mx-auto"
-            />
-            <p className="font-bold">Brad Pit</p>
-            <p>Total Course: 24</p>
-            <p>Total Certificates: 18</p>
-          </div>
-        </div>
+        <h1 className="text-gray-800 underline hover:text-slate-700 text-2xl font-bold ml-24">
+          Welcome back, Create Class Schedule...!
+        </h1>
 
         {/* Recommended Courses */}
-        <div className="mb-6">
-          <h2 className="font-bold text-lg mb-3">Recommended Courses</h2>
+        <div className="mb-10">
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold text-lg mb-3">Recommended Courses</h2>
+            <button
+              onClick={() => setShowCourseModal(true)}
+              className="flex items-center px-3 py-1 bg-green-500 text-white rounded shadow hover:bg-green-600"
+            >
+              <Plus className="w-4 h-4 mr-1" /> Create Course
+            </button>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {courses.map((course) => (
+            {courses.map((course, idx) => (
               <div
-                key={course.title}
+                key={idx}
                 className="bg-green-200 p-4 rounded shadow relative"
               >
                 {course.live && (
@@ -103,7 +79,12 @@ export default function Dashboard() {
                 )}
                 <p className="font-bold">{course.title}</p>
                 <p>{course.hoursTaken} Hour Taken / {course.totalHours} Hour</p>
-                <button className="mt-2 px-3 py-1 bg-orange-400 text-white rounded">Start</button>
+                <button
+                  onClick={() => handleStartCourse(course)}
+                  className="mt-2 px-3 py-1 bg-orange-400 text-white rounded hover:bg-orange-500"
+                >
+                  Start
+                </button>
               </div>
             ))}
           </div>
@@ -113,9 +94,17 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Classes */}
           <div className="bg-white p-4 rounded shadow">
-            <h2 className="font-bold mb-3">Your Classes</h2>
-            {classes.map((cls) => (
-              <div key={cls.title} className="mb-3 border-b pb-2">
+            <div className="flex justify-between items-center">
+              <h2 className="font-bold mb-3">Your Classes</h2>
+              <button
+                onClick={() => setShowClassModal(true)}
+                className="flex items-center px-3 py-1 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Create Class
+              </button>
+            </div>
+            {classes.map((cls, idx) => (
+              <div key={idx} className="mb-3 border-b pb-2">
                 <p className="font-semibold">{cls.title}</p>
                 <p>Duration: {cls.duration}</p>
                 <p>Lessons: {cls.lessons} | Assignments: {cls.assignments} | Students: {cls.students}</p>
@@ -132,6 +121,88 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Course Modal */}
+      {showCourseModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow w-96">
+            <h2 className="font-bold mb-4">Create Course</h2>
+            <input
+              type="text"
+              placeholder="Course Title"
+              value={newCourse.title}
+              onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Hours Taken"
+              value={newCourse.hoursTaken}
+              onChange={(e) => setNewCourse({ ...newCourse, hoursTaken: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Total Hours"
+              value={newCourse.totalHours}
+              onChange={(e) => setNewCourse({ ...newCourse, totalHours: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <div className="flex justify-end space-x-2">
+              <button onClick={() => setShowCourseModal(false)} className="px-3 py-1 bg-gray-300 rounded">Cancel</button>
+              <button onClick={handleAddCourse} className="px-3 py-1 bg-green-500 text-white rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Class Modal */}
+      {showClassModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow w-96">
+            <h2 className="font-bold mb-4">Create Class</h2>
+            <input
+              type="text"
+              placeholder="Class Title"
+              value={newClass.title}
+              onChange={(e) => setNewClass({ ...newClass, title: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="text"
+              placeholder="Duration (e.g., 40 Minute)"
+              value={newClass.duration}
+              onChange={(e) => setNewClass({ ...newClass, duration: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Lessons"
+              value={newClass.lessons}
+              onChange={(e) => setNewClass({ ...newClass, lessons: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Assignments"
+              value={newClass.assignments}
+              onChange={(e) => setNewClass({ ...newClass, assignments: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Students"
+              value={newClass.students}
+              onChange={(e) => setNewClass({ ...newClass, students: e.target.value })}
+              className="w-full border p-2 mb-2 rounded"
+            />
+            <div className="flex justify-end space-x-2">
+              <button onClick={() => setShowClassModal(false)} className="px-3 py-1 bg-gray-300 rounded">Cancel</button>
+              <button onClick={handleAddClass} className="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
