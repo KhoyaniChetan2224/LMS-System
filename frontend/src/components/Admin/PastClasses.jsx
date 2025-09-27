@@ -1,7 +1,51 @@
+// ClassSchedulePage.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminHeader from "./Admin Header/header";
 
+// ================== Reusable Input Component ==================
+function InputField({ label, name, value, onChange, error, type = "text", ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-1">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        {...props}
+        className={`w-full rounded-lg border px-3 py-2 text-sm ${
+          error ? "border-red-400" : "border-slate-200"
+        }`}
+      />
+      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+    </div>
+  );
+}
+
+// ================== Reusable Textarea Component ==================
+function TextAreaField({ label, name, value, onChange, error, ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-1">{label}</label>
+      <textarea
+        name={name}
+        value={value}
+        onChange={onChange}
+        {...props}
+        className={`w-full rounded-lg border px-3 py-2 text-sm ${
+          error ? "border-red-400" : "border-slate-200"
+        }`}
+      />
+      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+    </div>
+  );
+}
+
+// ================== Main Page ==================
 export default function ClassSchedulePage() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     className: "",
     teacher: "",
@@ -10,7 +54,6 @@ export default function ClassSchedulePage() {
     date: "",
     course: "",
     description: "",
-    file: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -39,7 +82,7 @@ export default function ClassSchedulePage() {
     "English",
   ];
 
-  // Validate form
+  // ✅ Validation function
   function validate(values) {
     const e = {};
     if (!values.className.trim()) e.className = "Class name is required";
@@ -51,22 +94,17 @@ export default function ClassSchedulePage() {
       e.course = "Please choose a course";
     if (!values.description.trim())
       e.description = "Class description is required";
-    if (!values.file) e.file = "Please upload a file";
     return e;
   }
 
-  // Input handler
+  // ✅ Handle input change
   function handleChange(e) {
-    const { name, value, files } = e.target;
-    if (files) {
-      setForm((s) => ({ ...s, file: files[0] }));
-    } else {
-      setForm((s) => ({ ...s, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   }
 
-  // Submit
+  // ✅ Handle form submit
   function handleSubmit(e) {
     e.preventDefault();
     const v = validate(form);
@@ -75,7 +113,6 @@ export default function ClassSchedulePage() {
     const newSchedule = {
       id: Date.now(),
       ...form,
-      file: form.file ? form.file.name : null,
       createdAt: new Date().toISOString(),
     };
 
@@ -83,7 +120,7 @@ export default function ClassSchedulePage() {
     handleReset();
   }
 
-  // Reset
+  // ✅ Reset form
   function handleReset() {
     setForm({
       className: "",
@@ -93,15 +130,19 @@ export default function ClassSchedulePage() {
       date: "",
       course: "",
       description: "",
-      file: null,
     });
     setErrors({});
   }
 
-  // Delete
+  // ✅ Delete a class
   function handleDelete(id) {
     if (!confirm("Delete this schedule?")) return;
     setSchedules((s) => s.filter((x) => x.id !== id));
+  }
+
+  // ✅ Redirect to Live Class Page
+  function handleJoinClass(schedule) {
+    navigate(`/admin/live/${schedule.id}`, { state: schedule });
   }
 
   return (
@@ -109,7 +150,7 @@ export default function ClassSchedulePage() {
       {/* Sidebar */}
       <AdminHeader />
 
-      {/* Main */}
+      {/* Main Content */}
       <main className="ml-2 mr-2 mt-2 flex-1 space-y-6 p-4 sm:p-6 overflow-y-auto">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Header */}
@@ -128,98 +169,47 @@ export default function ClassSchedulePage() {
             className="bg-white shadow-sm rounded-2xl p-6 border border-slate-100"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Class Name */}
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Class Name
-                </label>
-                <input
-                  name="className"
-                  value={form.className}
-                  onChange={handleChange}
-                  placeholder="e.g. Class A"
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.className ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.className && (
-                  <p className="text-xs text-red-600 mt-1">{errors.className}</p>
-                )}
-              </div>
-
-              {/* Teacher */}
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Teacher Name
-                </label>
-                <input
-                  name="teacher"
-                  value={form.teacher}
-                  onChange={handleChange}
-                  placeholder="e.g. Mr. Smith"
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.teacher ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.teacher && (
-                  <p className="text-xs text-red-600 mt-1">{errors.teacher}</p>
-                )}
-              </div>
-
-              {/* Subject */}
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Subject
-                </label>
-                <input
-                  name="subject"
-                  value={form.subject}
-                  onChange={handleChange}
-                  placeholder="e.g. Algebra II"
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.subject ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.subject && (
-                  <p className="text-xs text-red-600 mt-1">{errors.subject}</p>
-                )}
-              </div>
-
-              {/* Date */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  value={form.date}
-                  onChange={handleChange}
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.date ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.date && (
-                  <p className="text-xs text-red-600 mt-1">{errors.date}</p>
-                )}
-              </div>
-
-              {/* Time */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Time</label>
-                <input
-                  type="time"
-                  name="time"
-                  value={form.time}
-                  onChange={handleChange}
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.time ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.time && (
-                  <p className="text-xs text-red-600 mt-1">{errors.time}</p>
-                )}
-              </div>
-
-              {/* Course */}
+              <InputField
+                label="Class Name"
+                name="className"
+                value={form.className}
+                onChange={handleChange}
+                error={errors.className}
+                placeholder="e.g. Class A"
+              />
+              <InputField
+                label="Teacher Name"
+                name="teacher"
+                value={form.teacher}
+                onChange={handleChange}
+                error={errors.teacher}
+                placeholder="e.g. Mr. Smith"
+              />
+              <InputField
+                label="Subject"
+                name="subject"
+                value={form.subject}
+                onChange={handleChange}
+                error={errors.subject}
+                placeholder="e.g. Algebra II"
+              />
+              <InputField
+                label="Date"
+                type="date"
+                name="date"
+                value={form.date}
+                onChange={handleChange}
+                error={errors.date}
+              />
+              <InputField
+                label="Time"
+                type="time"
+                name="time"
+                value={form.time}
+                onChange={handleChange}
+                error={errors.time}
+              />
+              {/* Course Select */}
               <div>
                 <label className="block text-sm font-medium mb-1">Course</label>
                 <select
@@ -240,45 +230,16 @@ export default function ClassSchedulePage() {
                   <p className="text-xs text-red-600 mt-1">{errors.course}</p>
                 )}
               </div>
-
-              {/* Description */}
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium mb-1">
-                  Description
-                </label>
-                <textarea
+                <TextAreaField
+                  label="Description"
                   name="description"
                   value={form.description}
                   onChange={handleChange}
+                  error={errors.description}
                   placeholder="Brief description of class"
                   rows="3"
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.description ? "border-red-400" : "border-slate-200"
-                  }`}
                 />
-                {errors.description && (
-                  <p className="text-xs text-red-600 mt-1">
-                    {errors.description}
-                  </p>
-                )}
-              </div>
-
-              {/* File Upload */}
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium mb-1">
-                  Upload File
-                </label>
-                <input
-                  type="file"
-                  name="file"
-                  onChange={handleChange}
-                  className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                    errors.file ? "border-red-400" : "border-slate-200"
-                  }`}
-                />
-                {errors.file && (
-                  <p className="text-xs text-red-600 mt-1">{errors.file}</p>
-                )}
               </div>
             </div>
 
@@ -340,19 +301,18 @@ export default function ClassSchedulePage() {
                       <p className="text-sm text-slate-500">
                         {s.date} • {s.time}
                       </p>
-                      <p className="text-xs text-slate-500">
-                        {s.description}
-                      </p>
-                      {s.file && (
-                        <p className="text-xs text-slate-400">
-                          File: {s.file}
-                        </p>
-                      )}
+                      <p className="text-xs text-slate-500">{s.description}</p>
                       <p className="text-xs text-slate-400 mt-1">
                         Added: {new Date(s.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleJoinClass(s)}
+                        className="text-xs px-2 py-1 rounded-md border bg-green-500 text-white hover:bg-green-600"
+                      >
+                        Join Class
+                      </button>
                       <button
                         onClick={() =>
                           navigator.clipboard?.writeText(
