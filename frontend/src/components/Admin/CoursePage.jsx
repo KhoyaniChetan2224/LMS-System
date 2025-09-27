@@ -23,7 +23,7 @@ export default function CoursePage() {
         <div className="space-x-3 mt-4">
           <button
             onClick={() =>
-              navigate(`/admin/live${course.title}`, { state: course })
+              navigate(`/admin/live/${course.title}`, { state: course })
             }
             className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
           >
