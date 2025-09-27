@@ -41,7 +41,7 @@ const App = () => {
         {/* Admin Route */}
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/admin/header" element={<AdminHeader />} />
-        <Route path="/admin/live" element={<Live />} />
+        <Route path="/admin/live/:title" element={<Live />} />
         <Route path="/join/:meetingId" element={<LiveClassDashboard />} />
         <Route path='/admin/create-class-schedule' element={<UpcomingClassSchedule />} />
         <Route path="/admin/schedule-class" element={<ScheduleClass />} />
