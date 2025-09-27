@@ -113,7 +113,7 @@ export default function AdminHome() {
         {/* Homework + Activity */}
         <div className="bg-orange-100 p-4 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Static Upcoming Class (example live class) */}
-          <div className="bg-white rounded-lg shadow-md p-4">
+          {/* <div className="bg-white rounded-lg shadow-md p-4">
             <h3 className="font-semibold mb-2">Featured Class</h3>
             <div className="border border-gray-300 rounded-lg p-4">
               <div className="flex items-center justify-between">
@@ -146,7 +146,7 @@ export default function AdminHome() {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Homework */}
           <div className="bg-white rounded-lg shadow-md p-4">
