@@ -53,15 +53,16 @@ const AdminHeader = () => {
                     <img
                         src={logo}
                         alt="Logo"
-                        className="w-full h-full rounded-full object-cover border-4 border-slate-700"
+                        className="w-full h-full rounded-full object-cover border-4 animate-bounce border-slate-700"
                     />
                 </div>
                 <nav className="flex-1 space-y-2">
                     {[
                         { icon: <IoHome />, name: "Home", path: "/student/home" },
                         { icon: <IoCalendar />, name: "Schedule a Trial Class", path: "/student/schedule-class" },
-                        { icon: <MdUpcoming />, name: "Upcoming Live Classes", path: "/student/upcoming-classes" },
-                        { icon: <MdAssignment />, name: "My Homework", path: "/student/homework" },
+                        { icon: <MdUpcoming />, name: "Upcoming Live Classes", path: "/student/upcoming-live-class" },
+                        { icon: <MdAssignment />, name: "My Homework", path: "/student/student-homework" },
+                        { icon: <MdAssignment />, name: "Past Classes", path: "/student/student-past-classes" },
                         { icon: <MdQuiz />, name: "Test Yourself", path: "/student/test-yourself" },
                         { icon: <MdReport />, name: "Progress Report", path: "/student/progress-report" }
                     ].map((item) => (
