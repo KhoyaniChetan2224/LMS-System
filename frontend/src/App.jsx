@@ -27,7 +27,11 @@ import TeacherUpcommingLiveClasses from './components/teachers/TeacherUpcomingCl
 import StudentHome from './components/student/Home';
 import StudentHeader from './components/student/header/header';
 import StudentClass from './components/student/StudentClass';
-
+import ScheduleUpcomingLiveClass from './components/student/StudentUpcomingLiveClass';
+import StudentHomework from './components/student/StudentHomework';
+import StudentPastCLasses from './components/student/StudentPastClasses';
+import StudentYourSelf from './components/student/TestYourself';
+// import StudentTestPage from './components/student/TestPage';
 
 const App = () => {
   return (
@@ -63,6 +67,11 @@ const App = () => {
         <Route path="/student/home" element={<StudentHome />} />
         <Route path="/student/header" element={<StudentHeader />} />
         <Route path="/student/schedule-class" element={<StudentClass />} />
+        <Route path='/student/upcoming-live-class' element={<ScheduleUpcomingLiveClass />} />
+        <Route path='/student/student-homework' element={<StudentHomework />} />
+        <Route path='/student/student-past-classes' element={<StudentPastCLasses />} />
+        <Route path='/student/test-yourself' element={<StudentYourSelf />} />
+        {/* <Route path='/student/test-yourself/:id' element={<StudentTestPage/>} /> */}
 
       </Routes>
     </div>
