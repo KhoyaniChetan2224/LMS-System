@@ -22,6 +22,7 @@ import TeacherHeader from './components/teachers/header/header';
 import CourseSchedule from './components/teachers/CourseSchedule';
 import Chapter from './components/teachers/Chapter';
 import TeacherUpcommingLiveClasses from './components/teachers/TeacherUpcomingClasses';
+import ChapterDetailPage from './components/teachers/ChapterDetailPage';
 
 
 import StudentHome from './components/student/Home';
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="/teachers/course-schedule" element={<CourseSchedule />} />
         <Route path='/teachers/chapter' element={<Chapter />} />
         <Route path='/teachers/create-class-schedule' element={<TeacherUpcommingLiveClasses />} />
+         <Route path="/teachers/chapter/:id" element={<ChapterDetailPage />} />
 
         {/* Student Routes */}
         <Route path="/student/home" element={<StudentHome />} />
