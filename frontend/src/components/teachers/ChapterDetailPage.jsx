@@ -1,70 +1,43 @@
 // ChapterDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  CheckCircle,
-  PlayCircle,
-  FileText,
-} from "lucide-react";
-import { Document, Page, pdfjs } from "react-pdf";
-
-// Setup PDF worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import { ArrowLeft, CheckCircle, PlayCircle, FileText } from "lucide-react";
 
 export default function ChapterDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Example: Fetch chapter from backend or from local data
   const [chapter, setChapter] = useState(null);
-  const [docxContent, setDocxContent] = useState("");
-  const [numPages, setNumPages] = useState(null);
 
-  // Example data (replace with API later)
+  // 🔹 Simulated data (later replace with API call)
   const allChapters = [
     {
       id: 1,
       title: "Introduction to Programming",
       description: "Learn the basics of coding",
       progress: 100,
-      file: { name: "intro.pdf", type: "application/pdf", url: "/sample.pdf" },
+      file: null,
     },
     {
       id: 2,
       title: "Variables & Data Types",
       description: "Understand data representation",
       progress: 80,
-      file: { name: "variables.docx", type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", url: "/sample.docx" },
+      file: null,
     },
     {
       id: 3,
       title: "Control Structures",
       description: "Master if-else and loops",
       progress: 40,
-      file: { name: "control.doc", type: "application/msword", url: "/sample.doc" },
+      file: null,
     },
   ];
 
   useEffect(() => {
     const found = allChapters.find((c) => c.id === Number(id));
     setChapter(found || null);
-
-    if (found && found.file && found.file.type.includes("wordprocessingml")) {
-      // Load mammoth dynamically for docx
-      import("mammoth/mammoth.browser")
-        .then((mammoth) => {
-          fetch(found.file.url)
-            .then((res) => res.arrayBuffer())
-            .then((arrayBuffer) =>
-              mammoth.extractRawText({ arrayBuffer }).then((result) => {
-                setDocxContent(result.value);
-              })
-            );
-        })
-        .catch(() => {
-          setDocxContent("⚠️ Could not load Word document.");
-        });
-    }
   }, [id]);
 
   if (!chapter) {
@@ -74,69 +47,6 @@ export default function ChapterDetailPage() {
       </div>
     );
   }
-
-  // 📌 Render attached file
-  const renderFile = () => {
-    if (!chapter.file) return null;
-
-    if (chapter.file.type === "application/pdf") {
-      return (
-        <div className="my-4">
-          <h2 className="font-semibold mb-2">📄 PDF Preview</h2>
-          <Document
-            file={chapter.file.url}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          >
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-            ))}
-          </Document>
-        </div>
-      );
-    }
-
-    if (
-      chapter.file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
-      return (
-        <div className="my-4">
-          <h2 className="font-semibold mb-2">📄 Word (.docx) Preview</h2>
-          <div className="p-4 border rounded bg-gray-50 text-sm whitespace-pre-wrap">
-            {docxContent || "Loading..."}
-          </div>
-        </div>
-      );
-    }
-
-    if (chapter.file.type === "application/msword") {
-      return (
-        <div className="my-4">
-          <h2 className="font-semibold mb-2">📄 Word (.doc) File</h2>
-          <a
-            href={chapter.file.url}
-            download={chapter.file.name}
-            className="flex items-center gap-2 text-indigo-600 hover:underline"
-          >
-            <FileText size={18} /> Download {chapter.file.name}
-          </a>
-        </div>
-      );
-    }
-
-    return (
-      <div className="my-4">
-        <h2 className="font-semibold mb-2">📎 Resource File</h2>
-        <a
-          href={chapter.file.url}
-          download={chapter.file.name}
-          className="flex items-center gap-2 text-indigo-600 hover:underline"
-        >
-          <FileText size={18} /> Download {chapter.file.name}
-        </a>
-      </div>
-    );
-  };
 
   return (
     <div className="p-6 min-h-screen bg-cyan-50">
@@ -168,8 +78,17 @@ export default function ChapterDetailPage() {
           Progress: {chapter.progress}%
         </p>
 
-        {/* File Preview */}
-        {renderFile()}
+        {/* File */}
+        {chapter.file && (
+          <a
+            href={URL.createObjectURL(chapter.file)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-indigo-600 hover:underline mb-4"
+          >
+            <FileText size={18} /> View Resource
+          </a>
+        )}
 
         {/* Buttons */}
         {chapter.progress === 100 ? (
