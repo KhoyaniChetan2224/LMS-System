@@ -23,6 +23,8 @@ import CourseSchedule from './components/teachers/CourseSchedule';
 import Chapter from './components/teachers/Chapter';
 import TeacherUpcommingLiveClasses from './components/teachers/TeacherUpcomingClasses';
 import ChapterDetailPage from './components/teachers/ChapterDetailPage';
+import Help from './components/teachers/help';
+import TeacherProgressReport from './components/teachers/TeacherProgressReport';
 
 
 import StudentHome from './components/student/Home';
@@ -33,7 +35,6 @@ import StudentHomework from './components/student/StudentHomework';
 import StudentPastCLasses from './components/student/StudentPastClasses';
 import StudentYourSelf from './components/student/TestYourself';
 import StudentProgressReport from './components/student/StudentProgressReport';
-// import StudentTestPage from './components/student/TestPage';
 
 const App = () => {
   return (
@@ -65,6 +66,8 @@ const App = () => {
         <Route path='/teachers/chapter' element={<Chapter />} />
         <Route path='/teachers/create-class-schedule' element={<TeacherUpcommingLiveClasses />} />
          <Route path="/teachers/chapter/:id" element={<ChapterDetailPage />} />
+         <Route path='/teachers/help' element={<Help />} />
+         <Route path='/teachers/teacher-progres-report' element={<TeacherProgressReport />} />
 
         {/* Student Routes */}
         <Route path="/student/home" element={<StudentHome />} />
@@ -75,7 +78,6 @@ const App = () => {
         <Route path='/student/student-past-classes' element={<StudentPastCLasses />} />
         <Route path='/student/test-yourself' element={<StudentYourSelf />} />
         <Route path='/student/progress-report' element={<StudentProgressReport />} />
-        {/* <Route path='/student/test-yourself/:id' element={<StudentTestPage/>} /> */}
 
       </Routes>
     </div>
