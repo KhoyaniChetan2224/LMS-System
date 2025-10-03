@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../../img/logo.jpeg';
 import { IoHome } from 'react-icons/io5';
-import { MdMonetizationOn, MdUpcoming, MdAssignment, MdHistory, MdQuiz, MdReport } from 'react-icons/md';
+import { MdMonetizationOn, MdUpcoming, MdAssignment, MdReport } from 'react-icons/md';
 import { IoCalendar } from 'react-icons/io5';
 
 const header = () => {
@@ -53,7 +53,7 @@ const header = () => {
                     <img
                         src={logo}
                         alt="Logo"
-                        className="w-full h-20 rounded-full object-cover border-4 border-slate-700"
+                        className="w-full h-20 rounded-full object-cover animate-bounce border-4 border-slate-700"
                     />
                 </div>
                 <nav className="flex-1 space-y-2">
@@ -62,8 +62,8 @@ const header = () => {
                         { icon: <IoCalendar />, name: "Class and Course Schedule", path: "/teachers/course-schedule" },
                         { icon: <MdMonetizationOn />, name: "Chapter", path: "/teachers/chapter" },
                         { icon: <MdUpcoming />, name: "Upcoming Live Classes", path: "/teachers/create-class-schedule" },
-                        { icon: <MdAssignment />, name: "Help", path: "#" },
-                        { icon: <MdReport />, name: "Progress Report", path: "#" }
+                        { icon: <MdAssignment />, name: "Help", path: "/teachers/help" },
+                        { icon: <MdReport />, name: "Progress Report", path: "/teachers/teacher-progres-report" }
                     ].map((item) => (
                         <Link
                             key={item.name}
