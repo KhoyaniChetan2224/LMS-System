@@ -1,115 +1,260 @@
-// LiveClassJoin.jsx
-import React, { useState } from "react";
-import { Copy, Share2, Link as LinkIcon, Video } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  Copy,
+  Share2,
+  Video,
+  Users,
+  Lock,
+  Unlock,
+  XCircle,
+  Link as LinkIcon,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function LiveClassJoin() {
-  const [meetingLink, setMeetingLink] = useState("");
-  const [generatedLink, setGeneratedLink] = useState("");
+// Utility: Generate a random Meet-like link
+const generateMeetLink = () => {
+  const id = Math.random().toString(36).substring(2, 10);
+  return `https://meet.google.com/${id}`;
+};
 
-  // Generate random Google Meet-like link (demo only)
-  const generateLink = () => {
-    const id = Math.random().toString(36).substring(2, 12);
-    const newLink = `https://meet.google.com/${id}`;
-    setGeneratedLink(newLink);
-    setMeetingLink(newLink);
+export default function MeetPage() {
+  const [meeting, setMeeting] = useState(null); // meeting object
+  const [students, setStudents] = useState([]); // student list
+  const [joinInput, setJoinInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [message, setMessage] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Generate meeting link
+  const createMeeting = () => {
+    const newMeeting = {
+      link: generateMeetLink(),
+      locked: false,
+      ended: false,
+    };
+    setMeeting(newMeeting);
+    setMessage("✅ Meeting created successfully!");
   };
 
-  // Copy link to clipboard
-  const copyToClipboard = () => {
-    if (meetingLink) {
-      navigator.clipboard.writeText(meetingLink);
-      alert("Meeting link copied!");
-    }
+  // Copy to clipboard
+  const copyLink = () => {
+    if (!meeting) return setMessage("⚠️ No meeting to copy.");
+    navigator.clipboard.writeText(meeting.link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  // Share link via Web Share API
+  // Share link
   const shareLink = async () => {
-    if (navigator.share && meetingLink) {
-      await navigator.share({
-        title: "Join Live Class",
-        text: "Click to join the live class",
-        url: meetingLink,
-      });
+    if (!meeting) return setMessage("⚠️ No meeting to share.");
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Join my Live Class",
+          text: "Click to join:",
+          url: meeting.link,
+        });
+      } catch {
+        setMessage("❌ Share cancelled or failed.");
+      }
     } else {
-      alert("Sharing not supported on this device.");
+      copyLink();
+      setMessage("📋 Link copied instead (share not supported).");
     }
   };
 
-  // Join Google Meet
-  const joinMeeting = () => {
-    if (meetingLink) {
-      window.open(meetingLink, "_blank"); // open Google Meet in new tab
-    } else {
-      alert("Please enter or generate a meeting link.");
-    }
+  // Student joins meeting
+  // Student joins meeting
+const joinMeeting = (fromButton = false) => {
+  if (!meeting) return setMessage("⚠️ Please create a meeting first.");
+  if (!nameInput.trim()) return setMessage("⚠️ Enter your name to join.");
+  if (meeting.locked) return setMessage("🔒 Meeting is locked.");
+  if (meeting.ended) return setMessage("❌ Meeting has ended.");
+
+  const newStudent = {
+    id: Date.now(),
+    name: nameInput,
+    joinedAt: new Date().toLocaleTimeString(),
+  };
+
+  // Add student to list
+  const updatedStudents = [newStudent, ...students];
+  setStudents(updatedStudents);
+  setJoinInput(meeting.link);
+  setMessage(`🎉 ${nameInput} joined the class.`);
+
+  if (fromButton) {
+    // navigate to a "meeting room" page and send all students
+    navigate("/admin/meeting-room", {
+      state: { student: newStudent, meeting, participants: updatedStudents },
+    });
+  }
+};
+
+
+  // Lock / Unlock meeting
+  const toggleLock = () => {
+    if (!meeting) return;
+    setMeeting((prev) => ({ ...prev, locked: !prev.locked }));
+  };
+
+  // End meeting
+  const endMeeting = () => {
+    if (!meeting) return;
+    setMeeting((prev) => ({ ...prev, ended: true }));
+    setMessage("❌ Meeting ended.");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 via-blue-50 to-cyan-100 p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg text-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 p-6 flex flex-col items-center">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl p-8">
         {/* Header */}
-        <div className="flex flex-col items-center mb-6">
-          <Video className="w-12 h-12 text-indigo-600 mb-2" />
-          <h1 className="text-2xl font-bold text-indigo-700">
-            🎓 Join Live Class
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Enter or generate a Google Meet link to join your class.
-          </p>
+        <div className="flex items-center justify-between border-b pb-4 mb-6">
+          <div className="flex items-center gap-3">
+            <Video className="w-10 h-10 text-indigo-600" />
+            <h1 className="text-2xl font-bold text-indigo-700">
+              Google Meet – Live Class
+            </h1>
+          </div>
+          <Users className="w-6 h-6 text-gray-500" />
         </div>
 
-        {/* Meeting Input */}
-        <input
-          type="text"
-          placeholder="Paste Google Meet link..."
-          value={meetingLink}
-          onChange={(e) => setMeetingLink(e.target.value)}
-          className="w-full px-4 py-2 mb-4 border rounded-lg focus:ring-2 focus:ring-indigo-400"
-        />
+        {/* Meeting controls */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Teacher section */}
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <h2 className="text-lg font-semibold mb-3">Teacher Controls</h2>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={joinMeeting}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
-          >
-            Join Class
-          </button>
+            <button
+              onClick={createMeeting}
+              className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition mb-3"
+            >
+              🎓 Create New Meeting
+            </button>
 
-          <button
-            onClick={generateLink}
-            className="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition flex items-center justify-center gap-2"
-          >
-            <LinkIcon size={18} /> Generate Meeting Link
-          </button>
-        </div>
+            {meeting && (
+              <>
+                <div className="mb-3">
+                  <label className="text-sm text-gray-600">
+                    Meeting Link:
+                  </label>
+                  <input
+                    type="text"
+                    value={meeting.link}
+                    readOnly
+                    className="w-full mt-1 px-3 py-2 border rounded-md bg-gray-100"
+                  />
+                </div>
 
-        {/* Share Section */}
-        {generatedLink && (
-          <div className="mt-4 p-4 border rounded-lg bg-gray-50">
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Share this meeting link:
-            </p>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={copyLink}
+                    className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded hover:bg-gray-300"
+                  >
+                    <Copy size={16} /> {copied ? "Copied!" : "Copy"}
+                  </button>
+                  <button
+                    onClick={shareLink}
+                    className="flex items-center gap-2 bg-blue-200 px-3 py-2 rounded hover:bg-blue-300"
+                  >
+                    <Share2 size={16} /> Share
+                  </button>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={toggleLock}
+                    className={`flex items-center gap-2 px-3 py-2 rounded ${
+                      meeting.locked
+                        ? "bg-red-200 hover:bg-red-300"
+                        : "bg-green-200 hover:bg-green-300"
+                    }`}
+                  >
+                    {meeting.locked ? (
+                      <>
+                        <Lock size={16} /> Locked
+                      </>
+                    ) : (
+                      <>
+                        <Unlock size={16} /> Unlock
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={endMeeting}
+                    className="flex items-center gap-2 bg-rose-500 text-white px-3 py-2 rounded hover:bg-rose-600"
+                  >
+                    <XCircle size={16} /> End
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Student join section */}
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <h2 className="text-lg font-semibold mb-3">Join Meeting</h2>
+
             <input
               type="text"
-              readOnly
-              value={generatedLink}
+              placeholder="Enter your name"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
               className="w-full px-3 py-2 border rounded mb-3"
             />
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={copyToClipboard}
-                className="flex items-center gap-1 px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-              >
-                <Copy size={16} /> Copy
-              </button>
-              <button
-                onClick={shareLink}
-                className="flex items-center gap-1 px-3 py-2 bg-blue-200 rounded-lg hover:bg-blue-300"
-              >
-                <Share2 size={16} /> Share
-              </button>
-            </div>
+
+            <input
+              type="text"
+              placeholder="Paste or generate meeting link..."
+              value={joinInput}
+              onChange={(e) => setJoinInput(e.target.value)}
+              className="w-full px-3 py-2 border rounded mb-3"
+            />
+
+            <button
+              onClick={() => joinMeeting(true)}
+              className="w-full bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition"
+            >
+              🚀 Join Class
+            </button>
+          </div>
+        </div>
+
+        {/* Participants */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">Participants</h2>
+          <div className="bg-gray-50 rounded-xl p-5 max-h-64 overflow-y-auto">
+            {students.length === 0 ? (
+              <p className="text-sm text-gray-500">No students joined yet.</p>
+            ) : (
+              students.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex justify-between items-center border-b py-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center font-semibold text-indigo-700">
+                      {s.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-medium">{s.name}</p>
+                      <p className="text-xs text-gray-500">
+                        Joined at {s.joinedAt}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Messages */}
+        {message && (
+          <div className="mt-6 p-3 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
+            {message}
           </div>
         )}
       </div>
