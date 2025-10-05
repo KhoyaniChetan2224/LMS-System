@@ -10,6 +10,9 @@ import Live from './components/Admin/live';
 import UpcomingClassSchedule from './components/Admin/UpcomingClassSchedule';
 import LiveClassDashboard from './components/Admin/LiveClassDashboard';
 import ScheduleClass from './components/Admin/ScheduleClass';
+
+import MeetingRoom from './components/Admin/MeetingRoom';
+
 import Homework from './components/Admin/Homework';
 import PastClasses from './components/Admin/PastClasses';
 import TestYourself from './components/Admin/TestYourself';
@@ -36,6 +39,7 @@ import StudentPastCLasses from './components/student/StudentPastClasses';
 import StudentYourSelf from './components/student/TestYourself';
 import StudentProgressReport from './components/student/StudentProgressReport';
 
+
 const App = () => {
   return (
     <div>
@@ -49,6 +53,8 @@ const App = () => {
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/admin/header" element={<AdminHeader />} />
         <Route path="/admin/live/:title" element={<Live />} />
+        <Route path='/admin/meeting-room' element={<MeetingRoom />} />
+
         <Route path="/join/:meetingId" element={<LiveClassDashboard />} />
         <Route path='/admin/create-class-schedule' element={<UpcomingClassSchedule />} />
         <Route path="/admin/schedule-class" element={<ScheduleClass />} />
