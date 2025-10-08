@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AdminHeader from "./Admin Header/header";
+import { useNavigate } from "react-router-dom";
 
 export default function ClassSchedulePage() {
   const [form, setForm] = useState({
@@ -10,6 +11,8 @@ export default function ClassSchedulePage() {
     date: "",
     course: "",
   });
+
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
   const [schedules, setSchedules] = useState(() => {
@@ -99,6 +102,11 @@ export default function ClassSchedulePage() {
       course: "",
     });
     setErrors({});
+  }
+
+   // ✅ Redirect to Live Class Page
+  function handleJoinClass(schedule) {
+    navigate(`/admin/live/${schedule.id}`, { state: schedule });
   }
 
   return (
@@ -308,7 +316,13 @@ export default function ClassSchedulePage() {
                         Added: {new Date(s.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleJoinClass(s)}
+                        className="text-xs px-2 py-1 rounded-md border bg-green-500 text-white hover:bg-green-600"
+                      >
+                        Join Class
+                      </button>
                       <button
                         onClick={() =>
                           navigator.clipboard?.writeText(
@@ -316,14 +330,12 @@ export default function ClassSchedulePage() {
                           )
                         }
                         className="text-xs px-2 py-1 rounded-md border bg-white hover:bg-slate-100"
-                        title="Copy"
                       >
                         Copy
                       </button>
                       <button
                         onClick={() => handleDelete(s.id)}
                         className="text-xs px-2 py-1 rounded-md border text-red-600 bg-white hover:bg-red-50"
-                        title="Delete"
                       >
                         Delete
                       </button>
