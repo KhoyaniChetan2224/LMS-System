@@ -41,54 +41,7 @@ export default function AdminHome() {
             Welcome back, Admin...!
           </h1>
 
-          <div className="bg-yellow-50 rounded-lg p-5 mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Points */}
-            <div className="bg-white rounded-lg p-4 shadow text-center">
-              <div className="flex justify-center items-center gap-2 mb-2">
-                <img
-                  src="https://atlas-content-cdn.pixelsquid.com/assets_v2/333/3338697575397070639/previews/G03-200x200.jpg"
-                  alt="Star"
-                  className="w-10 h-10"
-                />
-                My Points
-              </div>
-              <div className="text-orange-500 text-xl font-bold">158.3</div>
-              <div className="flex justify-end">
-                <FaChevronRight className="text-orange-500" />
-              </div>
-            </div>
-
-            {/* Leaderboard */}
-            <div className="bg-white rounded-lg p-4 shadow text-center">
-              <div className="flex justify-center items-center gap-2 mb-2">
-                <img
-                  src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTEpzPCAbldNOChdX1S1AB0yGTKUw2j8OaeViaCkksuOypv1XJ8"
-                  alt="Star"
-                  className="w-10 h-10"
-                />
-                Leaderboard Rank
-              </div>
-              <div className="text-orange-500 text-xl font-bold">400</div>
-              <div className="flex justify-end">
-                <FaChevronRight className="text-orange-500" />
-              </div>
-            </div>
-
-            {/* Progress */}
-            <div className="bg-white rounded-lg p-4 shadow text-center">
-              <div className="flex justify-center items-center gap-2 mb-2">
-                <img
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTnc4v_sM-c2wGsdwTuX2vEIM1Qbj3uDuztB2KEJxjap4VmpVRc"
-                  alt="Star"
-                  className="w-9 h-9"
-                />
-                My Progress
-              </div>
-              <div className="flex justify-end">
-                <FaChevronRight className="text-orange-500 mt-4" />
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Upcoming Classes Section */}
