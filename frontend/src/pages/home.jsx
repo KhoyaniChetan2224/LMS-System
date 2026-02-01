@@ -368,7 +368,7 @@ const Home = () => {
       {/* ✅ Footer */}
       <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600">
-          © 2025 SKILL SHARP 365 INNOVATIONS. All rights reserved.
+          © 2025-26 Learning management system, Khoyani Chetan. All rights reserved...!
         </div>
       </footer>
     </motion.div>
@@ -376,3 +376,4 @@ const Home = () => {
 };
 
 export default Home;
+
